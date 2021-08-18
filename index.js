@@ -33,6 +33,36 @@ const whenQueryDone = (error, result) => {
 if (process.argv[2] === 'report') {
   const reportQuery = 'SELECT * FROM meals';
   client.query(reportQuery, whenQueryDone);
+} else if (process.argv[2] === 'log') {
+  if (process.argv.length !== 7) {
+    console.error('Error: Your command has to be in the following format:');
+    console.error(
+      'node index.js log <TYPE> <DESCRIPTION> <AMOUNT_OF_ALCOHOL> <WAS_HUNGRY_BEFORE_EATING>',
+    );
+    client.end();
+  } else if (Number.isNaN(Number(process.argv[5])) || !Number.isInteger(Number(process.argv[5]))) {
+    console.error('Error: The unit amount of alcohol consumed with your meal should be an integer.');
+    console.error('Your command has to be in the following format:');
+    console.error(
+      'node index.js log <TYPE> <DESCRIPTION> <AMOUNT_OF_ALCOHOL> <WAS_HUNGRY_BEFORE_EATING>',
+    );
+    client.end();
+  } else if (process.argv[6].toLowerCase() !== 'true' && process.argv[6].toLowerCase() !== 'false') {
+    console.error('Error: The fact that you are hungry before your meal can only be set to true or false.');
+    console.error('Your command has to be in the following format:');
+    console.error(
+      'node index.js log <TYPE> <DESCRIPTION> <AMOUNT_OF_ALCOHOL> <WAS_HUNGRY_BEFORE_EATING>',
+    );
+    client.end();
+  } else {
+    const input = [
+      ...process.argv.slice(3, 5),
+      Number(process.argv[5]),
+      (process.argv[6].toLowerCase() === 'true'),
+    ];
+    const logQuery = 'INSERT INTO meals (type, description, amount_of_alcohol, was_hungry_before_eating) VALUES ($1, $2, $3, $4)';
+    client.query(logQuery, input, whenQueryDone);
+  }
 } else {
   console.error('Error: invalid command.');
   client.end();
