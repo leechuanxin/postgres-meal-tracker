@@ -23,7 +23,12 @@ const whenQueryDone = (error, result) => {
     console.log('error', error);
   } else {
     // rows key has the data
-    console.log(result.rows);
+    result.rows.forEach((col) => {
+      const amtAlcoholFmt = (col.amount_of_alcohol <= 0) ? 'no alcohol' : `${col.amount_of_alcohol} unit(s) of alcohol`;
+      const hungerFmt = (col.was_hungry_before_eating) ? 'feeling hungry' : 'not feeling hungry';
+      console.log(`${col.id} ${col.type} -  ${col.description} - ${amtAlcoholFmt} - ${hungerFmt}`);
+      // 1 breakfast - nasi lemak - no alcohol - feeling hungry
+    });
   }
 
   // close the connection
